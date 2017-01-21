@@ -8,7 +8,12 @@
         <title>Laravel</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:100,600" rel="stylesheet" type="text/css">
+        <style type="text/css">
+            @font-face {
+                font-family: "Josefin Sans";
+                src: url('{{ public_path('fonts/JosefinSans-Regular.tff') }}');
+            }
+        </style>
 
         <!-- Styles -->
         <style>
