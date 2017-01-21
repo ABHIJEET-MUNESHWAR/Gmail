@@ -13,7 +13,13 @@ class CreateParticipantsTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('participants', function ($table) {
+            $table->increments('id');
+            $table->integer('thread_id')->unsigned();
+            $table->integer('user_id')->unsigned();
+            $table->timestamp('last_read')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -23,6 +29,6 @@ class CreateParticipantsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('participants');
     }
 }
