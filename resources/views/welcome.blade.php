@@ -8,7 +8,7 @@
         <title>Laravel</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:100,600" rel="stylesheet" type="text/css">
 
         <!-- Styles -->
         <style>
@@ -75,15 +75,18 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Gmail
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="https://github.com/ABHIJEET-MUNESHWAR">GitHub</a>
+                    <a href="https://www.facebook.com/abhijeet.muneshwar">Facebook</a>
+                    <a href="https://www.linkedin.com/in/abhijeet-muneshwar-78728624">LinkedIn</a>
+                    <a href="https://twitter.com/ABHIJEEEEEEET">Twitter</a>
+                    <a href="https://plus.google.com/u/0/+AbhijeetMuneshwar/about">Google Plus</a>
+                    <a href="http://instagram.com/abhijeetmuneshwar">Instagram</a>
+                    <a href="https://www.quora.com/Abhijeet-Ashok-Muneshwar">Quora</a>
+                    <a href="https://soundcloud.com/abhijeet-ashok-muneshwar">Soundcloud</a>
                 </div>
             </div>
         </div>
