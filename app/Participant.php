@@ -36,16 +36,6 @@ class Participant extends Model
     }
 
     /**
-     * Thread relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function thread()
-    {
-        return $this->belongsTo(Models::classname(Thread::class), 'thread_id', 'id');
-    }
-
-    /**
      * User relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
