@@ -356,3 +356,9 @@ $(document).on("click", ".js-panel-email-reply", function (e) {
     }
     $('#composeModal').modal('toggle');
 });
+
+$(document).on("click", "#js-compose-btn", function(){
+    $("#js-compose-subject").val("");
+    $("#js-compose-body").val("");
+    $("#js-compose-email-to").select2.defaults.reset();
+});
