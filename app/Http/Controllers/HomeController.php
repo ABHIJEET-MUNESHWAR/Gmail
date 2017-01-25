@@ -119,18 +119,11 @@ class HomeController extends Controller
         $userID         = $user->id;
         $inboxEmailsRaw = Email::getInboxEmails($userID);
         foreach ($inboxEmailsRaw as $inboxEmail) {
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["email_id"]        = $inboxEmail->email_id;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["subject"]         = $inboxEmail->subject;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["body"]            = $inboxEmail->body;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["from_user_id"]    = $inboxEmail->from_user_id;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["from_user_name"]  = $inboxEmail->from_user_name;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["from_user_email"] = $inboxEmail->from_user_email;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["to_user_id"]      = $inboxEmail->to_user_id;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["to_user_name"]    = $inboxEmail->to_user_name;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["to_user_email"]   = $inboxEmail->to_user_email;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["has_read"]        = $inboxEmail->has_read;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["created_at"]      = $inboxEmail->created_at;
-            $inboxEmails[$inboxEmail->parent_email_id][$inboxEmail->email_id]["parent_email_id"] = $inboxEmail->parent_email_id;
+            $inboxEmails[$inboxEmail->parent_email_id]["subject"]         = $inboxEmail->subject;
+            $inboxEmails[$inboxEmail->parent_email_id]["email_id"]        = $inboxEmail->email_id;
+            $inboxEmails[$inboxEmail->parent_email_id]["has_read"]        = $inboxEmail->has_read;
+            $inboxEmails[$inboxEmail->parent_email_id]["created_at"]      = $inboxEmail->created_at;
+            $inboxEmails[$inboxEmail->parent_email_id]["parent_email_id"] = $inboxEmail->parent_email_id;
         }
         $response['message'] = "success";
         $response['data']    = array("inbox" => $inboxEmails);
@@ -196,24 +189,22 @@ class HomeController extends Controller
         return json_encode($response);
     }
 
-    public function markAsRead()
+    public function getEmailDetails()
     {
-        $response       = array();
-        $params         = Request::all();
-        $user           = Auth::user();
-        $userID         = $user->id;
-        $params['from'] = $userID;
+        $response          = array();
+        $params            = Request::all();
+        $user              = Auth::user();
+        $userID            = $user->id;
+        $params['user_id'] = $userID;
         if (!Request::ajax()) {
             return false;
         }
-        $isRead = Email::markAsRead($params);
-        if ($isRead) {
-            $response['message'] = "success";
-            $response['data']    = "Email is read";
-        } else {
-            $response['message'] = "error";
-            $response['data']    = "Email is not read";
+        if ($params["has_read"] == "0") {
+            $isRead = Email::markAsRead($params);
         }
+        $emailDetails        = Email::getEmailDetails($params);
+        $response['message'] = "success";
+        $response['data']    = array("inbox" => $emailDetails);
 
         return json_encode($response);
     }

@@ -100,11 +100,11 @@ $(document).on("click", "#js-compose-close", function () {
         data: email,
         dataType: "json",
         success: function (data) {
-            var boxName = $("#js-box-name").text();
+            var email_type = $("#js-box-name").text();
             $("#js-panel-alert-type").addClass("panel-success");
             $("#js-box-name").text("Email is drafted.");
             setTimeout(function () {
-                $("#js-box-name").text(boxName).show().delay(2000).fadeIn();
+                $("#js-box-name").text(email_type).show().delay(2000).fadeIn();
                 $("#js-panel-alert-type").removeClass("panel-success");
             }, 5000);
         },
@@ -152,8 +152,11 @@ function getInEmails(emailType) {
                 for (var parent_email in parent_emails) {
                     if (parent_emails.hasOwnProperty(parent_email)) {
                         parent_email = parent_emails[parent_email];
-                        var subject = parent_email[Object.keys(parent_email)[0]].subject;
-                        html += '<div class="panel panel-default">';
+                        var subject = parent_email.subject;
+                        var email_id = parent_email.email_id;
+                        var parent_email_id = parent_email.parent_email_id;
+                        var has_read = parent_email.has_read;
+                        html += '<div class="panel panel-default" id="js-panel-container-' + parent_email_id + '">';
                         html += '<div class="panel-heading js-panel-email-subject" data-parent-email-id="' + parent_email_id + '" data-email-id="' + email_id + '" data-has-read="' + has_read + '" role="tab" id="heading' + i + '">';
                         if (!!has_read) {
                             html += '<div class="panel-title">';
@@ -170,36 +173,7 @@ function getInEmails(emailType) {
                         }
                         html += "</div>";
                         html += '<div id="collapse' + i + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + i + '">';
-                        html += '<div class="panel-body">';
-                        for (var email in parent_email) {
-                            if (parent_email.hasOwnProperty(email)) {
-                                email = parent_email[email];
-                                var body = email.body;
-                                var created_at = email.created_at;
-                                var email_id = email.email_id;
-                                var from_user_email = email.from_user_email;
-                                var from_user_id = email.from_user_id;
-                                var from_user_name = email.from_user_name;
-                                var to_user_email = email.to_user_email;
-                                var to_user_id = email.to_user_id;
-                                var to_user_name = email.to_user_name;
-                                var has_read = email.has_read;
-                                var parent_email_id = email.parent_email_id;
-                                subject = email.subject;
-                                html += '<em>';
-                                html += 'From: ' + from_user_name + ' &lt;' + from_user_email + '&gt; to '+to_user_name+' &lt;'+ to_user_email +'&gt; at: ' + created_at;
-                                html += '</em>';
-                                html += '<div class="container-fluid">';
-                                html += body;
-                                html += '</div><br>';
-                            }
-                        }
-                        if (emailType == "Inbox") {
-                            html += "<div class='pull-right'>";
-                            html += '<button type="button" class="btn btn-default btn-xs js-panel-email-reply" data-email-subject="' + subject + '" data-parent-email-id="' + parent_email_id + '" data-email-id="' + email_id + '" data-from-user-id="' + from_user_id + '"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Reply</button> ';
-                            html += '<button type="button" class="btn btn-default btn-xs js-panel-email-delete" data-delete-parent-email-id="' + parent_email_id + '" data-delete-email-id="' + email_id + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>';
-                            html += '</div>';
-                        }
+                        html += '<div class="panel-body" id="js-panel-body-' + parent_email_id + '">';
                         html += '</div>';
                         html += '</div>';
                         html += '</div>';
@@ -236,8 +210,8 @@ function getOutEmails(emailType) {
                         var has_read = email.has_read;
                         var parent_email_id = email.parent_email_id;
                         var subject = email.subject;
-                        html += '<div class="panel panel-default">';
-                        html += '<div class="panel-heading" role="tab" id="heading' + i + '">';
+                        html += '<div class="panel panel-default" id="js-panel-container-' + parent_email_id + '">';
+                        html += '<div class="panel-heading js-panel-email-subject" data-parent-email-id="' + parent_email_id + '" data-email-id="' + email_id + '" data-has-read="' + has_read + '"  role="tab" id="heading' + i + '">';
                         if (!!has_read) {
                             html += '<div class="panel-title">';
                         } else {
@@ -253,12 +227,7 @@ function getOutEmails(emailType) {
                         }
                         html += "</div>";
                         html += '<div id="collapse' + i + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + i + '">';
-                        html += '<div class="panel-body">';
-                        html += '<em>';
-                        html += 'To: ' + to_user_name + ' &lt;' + to_user_email + '&gt; at: ' + created_at;
-                        html += '</em>';
-                        html += '<div class="container-fluid">';
-                        html += body;
+                        html += '<div class="panel-body" id="js-panel-body-' + parent_email_id + '">';
                         html += '</div>';
                         html += '</div>';
                         html += '</div>';
@@ -277,21 +246,59 @@ $(document).on("click", ".js-panel-email-subject", function (e) {
     var email_id = $(this).data("emailId");
     var parent_email_id = $(this).data("parentEmailId");
     var has_read = $(this).data("hasRead");
-    if (!!has_read) {
-        return false;
-    }
+    var email_type = $("#js-box-name").text();
     var email = {
         email_id: email_id,
+        has_read: has_read,
         parent_email_id: parent_email_id,
+        email_type: email_type,
         _token: $('input[name=_token]').val()
     }
     $.ajax({
-        url: "/markAsRead",
+        url: "/getEmailDetails",
         type: "POST",
         dataType: "json",
         data: email,
         success: function (data) {
-            //
+            var response = data;
+            var email_type = $("#js-box-name").text();
+            if (response.message == "success") {
+                var emails = response.data.inbox;
+                var html = "";
+                var email_length = emails.length;
+                for (var i = 0; i < email_length; i++) {
+                    var email = emails[i];
+                    var body = email.body;
+                    var created_at = email.created_at;
+                    var email_id = email.email_id;
+                    var from_user_email = email.from_user_email;
+                    var from_user_id = email.from_user_id;
+                    var from_user_name = email.from_user_name;
+                    var to_user_email = email.to_user_email;
+                    var to_user_id = email.to_user_id;
+                    var to_user_name = email.to_user_name;
+                    var has_read = email.has_read;
+                    var parent_email_id = email.parent_email_id;
+                    subject = email.subject;
+                    html += '<em>';
+                    html += '<mark>From</mark>: ' + from_user_name + ' &lt;' + from_user_email + '&gt; <mark>to</mark> ' + to_user_name + ' &lt;' + to_user_email + '&gt; <mark>at</mark>: ' + created_at;
+                    html += '</em>';
+                    html += '<div class="container-fluid">';
+                    html += body;
+                    html += '</div><br>';
+                }
+                if (email_type != "Trash") {
+                    html += "<div class='pull-right'>";
+                    var btn_name = "Reply";
+                    if (email_type == "Draft") {
+                        btn_name = "Send";
+                    }
+                    html += '<button type="button" class="btn btn-default btn-xs js-panel-email-reply" data-email-body="' + body + '" data-email-subject="' + subject + '" data-parent-email-id="' + parent_email_id + '" data-email-id="' + email_id + '" data-from-user-id="' + from_user_id + '"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> ' + btn_name + '</button> ';
+                    html += '<button type="button" class="btn btn-default btn-xs js-panel-email-delete" data-delete-parent-email-id="' + parent_email_id + '" data-delete-email-id="' + email_id + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>';
+                    html += '</div>';
+                }
+                $("#js-panel-body-" + parent_email_id).empty().append(html);
+            }
         },
         error: function (xhr, ajaxOptions, thrownError) {
             //
@@ -314,7 +321,14 @@ $(document).on("click", ".js-panel-email-delete", function (e) {
         dataType: "json",
         data: email,
         success: function (data) {
-            //
+            var email_type = $("#js-box-name").text();
+            $("#js-panel-container-"+parent_email_id).remove();
+            $("#js-panel-alert-type").addClass("panel-success");
+            $("#js-box-name").text("Email is trashed.");
+            setTimeout(function () {
+                $("#js-box-name").text(email_type).show().delay(2000).fadeIn();
+                $("#js-panel-alert-type").removeClass("panel-success");
+            }, 5000);
         },
         error: function (xhr, ajaxOptions, thrownError) {
             //
@@ -324,8 +338,11 @@ $(document).on("click", ".js-panel-email-delete", function (e) {
 
 $(document).on("click", ".js-panel-email-reply", function (e) {
     e.preventDefault();
+    var email_type = $("#js-box-name").text();
+    var $email_body_id = $("#js-compose-body");
     var $composeSendBtn = $("#js-compose-send");
     var email_id = $(this).data("emailId");
+    var body = $(this).data("emailBody");
     var parent_email_id = $(this).data("parentEmailId");
     var subject = $(this).data("emailSubject");
     var from_user_id = $(this).data("fromUserId");
@@ -333,6 +350,9 @@ $(document).on("click", ".js-panel-email-reply", function (e) {
     $composeSendBtn.data("parentEmailID", parent_email_id);
     $("#js-compose-email-to").select2().val(from_user_id).trigger("change");
     $("#js-compose-subject").val(subject);
-    $("#js-compose-body").val("");
+    $email_body_id.val("");
+    if (email_type == "Draft") {
+        $email_body_id.val(body);
+    }
     $('#composeModal').modal('toggle');
 });

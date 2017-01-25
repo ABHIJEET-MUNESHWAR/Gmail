@@ -58,26 +58,18 @@ class Email extends Model
     public static function getInboxEmails($userID)
     {
         $sql         = "SELECT
-            e.id as email_id,
             e.subject as subject,
-            e.body as body,
-            fu.id as from_user_id,
-            fu.name as from_user_name,
-            fu.email as from_user_email,
-            tu.id as to_user_id,
-            tu.name as to_user_name,
-            tu.email as to_user_email,
+            eu.email_id as email_id,
             eu.parent_email_id as parent_email_id,
             eu.has_read as has_read,
             eu.created_at
-            from email_user as eu 
-            left join users as fu on eu.from_user_id = fu.id 
-            left join users as tu on eu.to_user_id = tu.id
+            from email_user as eu
+            left join users as fu on eu.from_user_id = fu.id
             left join emails as e on eu.email_id = e.id
-            where 
-            eu.is_deleted = 0 AND 
+            where
+            eu.is_deleted = 0 AND
             eu.is_draft = 0 AND
-            (eu.to_user_id=$userID OR eu.from_user_id=$userID)
+            eu.to_user_id=$userID
             order by created_at desc";
         $inboxEmails = DB::select($sql);
 
@@ -129,22 +121,20 @@ class Email extends Model
 
     public static function getTrashEmails($userID)
     {
-        $sql         = "SELECT
-            e.id as email_id,
+        $sql = "SELECT
             e.subject as subject,
-            e.body as body,
-            fu.id as from_user_id,
-            fu.name as from_user_name,
-            fu.email as from_user_email,
+            eu.email_id as email_id,
             eu.parent_email_id as parent_email_id,
             eu.has_read as has_read,
             eu.created_at
-            from email_user as eu 
-            left join users as fu on eu.from_user_id = fu.id 
-            left join emails as e on eu.parent_email_id = e.id
-            where eu.to_user_id=$userID
-            and eu.is_deleted=1
+            from email_user as eu
+            left join users as fu on eu.from_user_id = fu.id
+            left join emails as e on eu.email_id = e.id
+            where
+            eu.is_deleted=1 and
+            eu.to_user_id=$userID
             order by created_at desc";
+
         $inboxEmails = DB::select($sql);
 
         return $inboxEmails;
@@ -215,5 +205,49 @@ class Email extends Model
         }
 
         return true;
+    }
+
+    public static function getEmailDetails($params)
+    {
+        $email_type = $params['email_type'];
+        $where_clause    = "";
+        if (!empty($email_type)) {
+            if ($email_type == "Trash") {
+                $where_clause = " eu.is_deleted = 1 AND ";
+            }
+            if ($email_type == "Inbox") {
+                $where_clause = " eu.is_deleted = 0 AND eu.is_draft = 0 AND ";
+            }
+            if ($email_type == "Draft") {
+                $where_clause = " eu.is_draft = 1 AND ";
+            }
+        }
+        $user_id         = $params['user_id'];
+        $parent_email_id = $params['parent_email_id'];
+        $sql             = "SELECT
+            e.id as email_id,
+            e.subject as subject,
+            e.body as body,
+            fu.id as from_user_id,
+            fu.name as from_user_name,
+            fu.email as from_user_email,
+            tu.id as to_user_id,
+            tu.name as to_user_name,
+            tu.email as to_user_email,
+            eu.parent_email_id as parent_email_id,
+            eu.has_read as has_read,
+            eu.created_at
+            from email_user as eu
+            left join users as fu on eu.from_user_id = fu.id
+            left join users as tu on eu.to_user_id = tu.id
+            left join emails as e on eu.email_id = e.id
+            where
+            $where_clause
+            eu.parent_email_id = $parent_email_id AND
+            (eu.to_user_id=$user_id OR eu.from_user_id=$user_id)
+            order by created_at asc";
+        $inboxEmails     = DB::select($sql);
+
+        return $inboxEmails;
     }
 }

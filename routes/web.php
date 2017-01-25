@@ -26,5 +26,5 @@ Route::get('/getInboxEmails', 'HomeController@getInboxEmails');
 Route::get('/getDraftEmails', 'HomeController@getDraftEmails');
 Route::get('/getSentEmails', 'HomeController@getSentEmails');
 Route::get('/getTrashEmails', 'HomeController@getTrashEmails');
-Route::post('/markAsRead', 'HomeController@markAsRead');
+Route::post('/getEmailDetails', 'HomeController@getEmailDetails');
 Route::post('/deleteEmail', 'HomeController@deleteEmail');
