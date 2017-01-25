@@ -10,12 +10,12 @@
                            data-target="#composeModal">Compose
                         </a>
                     </li>
-                    <li class="list-group-item"><a href="#">Inbox <span id="js-inbox-unread-count"
+                    <li class="list-group-item" id="js-inbox-lbl"><a href="">Inbox <span id="js-inbox-unread-count"
                                                                         class="badge"></span></a></li>
-                    <li class="list-group-item"><a href="#">Drafts <span id="js-drafts-count" class="badge"></span></a>
+                    <li class="list-group-item" id="js-draft-lbl"><a href="">Drafts <span id="js-drafts-count" class="badge"></span></a>
                     </li>
-                    <li class="list-group-item"><a href="#">Sent</a></li>
-                    <li class="list-group-item"><a href="#">Trash</a></li>
+                    <li class="list-group-item" id="js-sent-lbl"><a href="">Sent</a></li>
+                    <li class="list-group-item" id="js-trash-lbl"><a href="">Trash</a></li>
                 </ul>
             </div>
             <div class="col-md-10">
@@ -70,7 +70,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" id="js-compose-close" data-dismiss="modal">Close
                         </button>
-                        <button type="submit" class="btn btn-primary" id="js-compose-send">Send</button>
+                        <button type="submit" class="btn btn-primary" id="js-compose-send" data-is-reply="0" data-parent-email-id="0">Send</button>
                     </div>
 
                 </div>

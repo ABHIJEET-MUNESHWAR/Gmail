@@ -1,11 +1,8 @@
 
 // Fonts
-@font-face {
-  font-family: 'Josefin Sans';
-  src: url('../fonts/JosefinSans-Regular.tff');
-  font-weight: normal;
-  font-style: normal;
-}
+$icon-font-path: '/fonts/';
+
+$font-family-sans-serif: "Quicksand", sans-serif;
 
 // Variables
 @import "variables";
