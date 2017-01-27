@@ -47,11 +47,11 @@ Below are screen-shots:
 
 10. Drafted Email
 
-![](public/img/Screenshots/10.Drafted-Email "Drafted Email")
+![](public/img/Screenshots/10.Drafted-Email.png "Drafted Email")
 
 11. Delete Email
 
-![](public/img/Screenshots/11.Deleting-it "Delete Email")
+![](public/img/Screenshots/11.Deleting-it.png "Delete Email")
 
 12. Trashed Email
 
