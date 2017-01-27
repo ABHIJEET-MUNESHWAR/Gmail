@@ -9,4 +9,4 @@ It has below features:
 
 Below are screenshots:
 
-1) ![alt Home Page](Gmail/public/img/Screenshots/1. Home Page.png)
+1) ![alt Home Page](public/img/Screenshots/1. Home Page.png, "Home Page")
