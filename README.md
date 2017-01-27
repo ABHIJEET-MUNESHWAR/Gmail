@@ -48,13 +48,16 @@ Below are screen-shots:
     ![](public/img/Screenshots/12.Trashed-Email.png "Trashed Email")
 
 
+
+
+
+
 ## Installation:
 
-### Setting up database
 1. The mysql file dump is stored at path: database/seeds/gmail.sql
 2. Create new database with name as "gmail".
-3) Import gmail.sql to this database.
-4) Run below command
+3. Import gmail.sql to this database.
+4. Run below command
 
 ```sh
 php artisan serve
